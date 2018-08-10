@@ -1,0 +1,26 @@
+# docker-compose -f docker-compose.yml up -d --build
+version: '3.4'
+
+services:
+  webapplication1:
+    image: ${DOCKER_REGISTRY}webapplication1
+    build:
+      context: .
+      dockerfile: WebApplication1/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 8080:80
+    depends_on:
+      - sql.data  
+
+# /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Pass@word'
+# > SELECT name FROM master.dbo.sysdatabases
+  sql.data:
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      - MSSQL_SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
